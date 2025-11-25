@@ -1,68 +1,40 @@
-let inputBox = document.getElementById("inp");
+const activityBox = document.getElementById("activity");
+const typeBox = document.getElementById("type");
+const participantsBox = document.getElementById("participants");
+const message = document.getElementById("message");
+const typeSelect = document.getElementById("typeSelect");
+const btn = document.getElementById("btn");
 
 
+async function fetchActivity() {
+    message.textContent = "";
+    activityBox.textContent = "Loading...";
+    typeBox.textContent = "";
+    participantsBox.textContent = "";
 
-let addBtn = document.getElementById("btn");
+    let selectedType = typeSelect.value;
 
+    let api = "https://www.boredapi.com/api/activity";
 
-let list = document.getElementById("list");
+    if (selectedType !== "") {
+        api = `https://www.boredapi.com/api/activity?type=${selectedType}`;
+    }
 
+    let finalURL = `https://api.allorigins.win/raw?url=${encodeURIComponent(api)}`;
 
+    try {
+        const response = await fetch(finalURL);
+        const data = await response.json();
 
+        activityBox.textContent = "Activity: " + data.activity;
+        typeBox.textContent = "Type: " + data.type;
+        participantsBox.textContent = "Participants: " + data.participants;
 
-
-function addItem(){
-
-
-    let inputValue = inputBox.value;
-
-
-
-
-
-    let li = document.createElement("li");
-
-
-    li.textContent = inputValue;
-
-
-    li.classList.add("list-item")
-
-
-
-
-
-    let delBtn = document.createElement("button");
-
-
-    delBtn.textContent = "X";
-
-
-    delBtn.classList.add("del-btn")
-
-
-
-
-
-    delBtn.addEventListener("click", ()=>{
-
-
-        list.removeChild(li);
-
-
-    });
-
-
-    li.appendChild(delBtn);
-
-
-    list.appendChild(li);
-
-
-    inputBox.value = "";
-
-
+    } catch (err) {
+        activityBox.textContent = "";
+        message.textContent = "Oops, something went wrong — please try again.";
+    }
 }
 
-
-addBtn.addEventListener("click", addItem);
+fetchActivity();
+btn.addEventListener("click", fetchActivity);
